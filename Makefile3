@@ -1,0 +1,18 @@
+.SUFFIXES:.c .o 
+CC=gcc
+SRCS=log.c conf.c libprocessjava.c
+OBJS=$(SRCS:.c=.o)
+vpath %.h src
+vpath %..c src
+
+TARGET=libprocessjava.so
+
+start:$(TARGET)
+	$(CC) -o $(TARGET) $(OBJS)
+.c.o:
+	$(CC) -o $@ -c $< 
+.PHONY:clean
+	@echo "clean..."
+install:
+	@echo "install libprocessjava.."
+	echo "/usr/local/lib/libprocessjava.so" > /etc/ld.so.preload

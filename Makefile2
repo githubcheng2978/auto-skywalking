@@ -1,0 +1,17 @@
+CC = gcc
+CFLAGS = -Wall -g -fPIC 
+
+TARGET = libprocess.so
+
+vpath %.h ./src
+
+OBJS = conf.so libprocessjava.so
+SRCS = ./src/conf.c ./src/libprocessjava.c 
+
+$(OBJS):$(SRCS)
+	$(CC) $(CFLAGS) -c $^
+all:$(OBJS)
+	$(CC) -shared -fPIC -o $(TARGET) $(OBJS)
+clean:
+	rm -f *.o
+	rm -f *.so
