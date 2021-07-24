@@ -11,6 +11,9 @@
 #define HOOK_COMMOND "java"
 
 #define HOOK_NAME ".jar"
+
+#define HOOK_NAME_PARAM_ONLY "-jar"
+
 #define SKYWALKING_CFG_PATH "/etc/skywalking.cnf" 
 
 #define SKYWALKING_CLIENT  "skywalking_client"
@@ -24,8 +27,9 @@
 
 
 typedef ssize_t (*execve_func_t)(const char* filename, char* const argv[], char* const envp[]);
-
 static execve_func_t old_execve = NULL;
+
+
 
 int stringEndWith(const char* source,const char* target){
    int sourceLen =  strlen(source);
@@ -84,7 +88,7 @@ int printArgs(char* const argv[]){
 }
 
 char **getEnv(char* const envp[],int length,char*skywalkingName){
-    char ** newParam = (char**)malloc((length+5)*sizeof(char*));
+    char ** newParam = (char**)malloc((length+6)*sizeof(char*));
 
     if(newParam==NULL){
         printf("modify params error\n");
@@ -129,21 +133,30 @@ char **getEnv(char* const envp[],int length,char*skywalkingName){
     newParam[len]=NULL;
     return newParam;
 }
-
+int judge(char* const argv[]){
+  int len=0;
+    while(argv[len]!=NULL){
+      if(strcmp(argv[len],HOOK_NAME_PARAM_ONLY)==0){
+        return 0;
+      }
+      len++;
+    }
+  return len;
+}
 
 int execve(const char* filename, char* const argv[], char* const envp[]) {
-  if(stringEndWith(filename,HOOK_COMMOND)==0){ 
+  if(stringEndWith(filename,HOOK_COMMOND)==0 && judge(argv)==0){ 
     printf("the raw command line: ");
     int len = printArgs(argv);
     char hookName[1024] = {0};
     char** argvs = modifyArgv(argv,len,hookName);
-    // printf("\nthe command line after modification:");
+    printf("\nthe command line after modification:");
     len = printArgs(argvs);
-    // printf("\nthe raw evn line:");
+    printf("\nthe raw evn line:");
     len = printArgs(envp);
     char** envs =  getEnv(envp,len,hookName);
-    // printf("\nthe raw evn line after modification:");
-    // len = printArgs(envs);
+    printf("\nthe raw evn line after modification:");
+    // printArgs(envs);
     printf("\n");
     old_execve = dlsym(RTLD_NEXT, "execve");
     return old_execve(filename, argvs, envs);

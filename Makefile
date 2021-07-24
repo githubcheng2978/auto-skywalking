@@ -1,12 +1,14 @@
 all: libprocessjava.so
 libprocessjava.so: src/libprocessjava.c src/conf.c src/conf.h src/log.c src/log.h
 	gcc -Wall -fPIC -shared -o libprocessjava.so src/libprocessjava.c src/conf.c src/conf.h src/log.c src/log.h -ldl
-	mv libprocessjava.so /usr/local/lib
-	echo "/usr/local/lib/libprocessjava.so" > /etc/ld.so.preload
+	# mv libprocessjava.so /usr/local/lib64
+	# echo "/usr/local/lib64/libprocessjava.so" > /etc/ld.so.preload
 .PHONY clean:
 	rm -f libprocessjava.so
 # .SUFFIXES:.c .o 
 # CC=gcc
+
+
 # SRCS=log.c conf.c libprocessjava.c
 # OBJS=$(SRCS:.c=.o)
 # vpath %.h src
