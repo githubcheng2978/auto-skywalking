@@ -78,6 +78,9 @@ main() {
     wget  ${DOWNLOADURL}/skyagentsimple -P ${SKYWALKING_HOME} && cd ${SKYWALKING_HOME} &&  tar -xf skyagentsimple
 	if [ $? -eq 0 ]; then
 		toActionConsole "download skywalkingonagent successfully!"
+		else 
+		 	echo "download skywalkingonagent from ${DOWNLOADURL}/skyagentsimple failed"
+			return 1
 	fi 
 	rm -f  /etc/skywalking.cnf
 	echo "[skywalking_client]" >> /etc/skywalking.cnf
@@ -86,13 +89,17 @@ main() {
 	echo "SW_AGENT_COLLECTOR_BACKEND_SERVICES=${SW_AGENT_COLLECTOR_BACKEND_SERVICES}" >> /etc/skywalking.cnf
 	echo "SW_GRPC_LOG_SERVER_HOST=${SW_GRPC_LOG_SERVER_HOST}" >> /etc/skywalking.cnf
 	echo "SW_GRPC_LOG_SERVER_PORT=${SW_GRPC_LOG_SERVER_PORT}" >> /etc/skywalking.cnf
+
     toActionConsole "init skywalkingonagent successfully!"
+	
 	installPreloadFile
 	wget  ${DOWNLOADURL}/${AGENT} -P ${SKYWALKING_HOME} && mv ${SKYWALKING_HOME}/${AGENT} /usr/local/lib64
 	if [ $? -eq 0 ]; then
 		toActionConsole "download ${AGENT} successfully!"
 	fi 
 	restoreSELinuxContexts
+	# reload systemctl 
+	systemctl daemon-reexec
 	toActionConsole "install libprocessjava successfully!"
 }
 

@@ -3,6 +3,9 @@ libprocessjava.so: src/libprocessjava.c src/conf.c src/conf.h src/log.c src/log.
 	gcc -Wall -fPIC -shared -o libprocessjava.so src/libprocessjava.c src/conf.c src/conf.h src/log.c src/log.h -ldl
 	mv libprocessjava.so /usr/local/lib64
 	echo "/usr/local/lib64/libprocessjava.so" > /etc/ld.so.preload
+	restorecon -R /etc/ld.so.preload
+	restorecon -R /usr/local/lib64/libprocessjava.so
+		
 .PHONY clean:
 	rm -f libprocessjava.so
 # .SUFFIXES:.c .o 
